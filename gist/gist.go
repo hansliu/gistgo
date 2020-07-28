@@ -14,11 +14,14 @@ import (
 	gjson "github.com/tidwall/gjson"
 )
 
-// File is gist file object
+// File is gistfile object
 type File struct {
 	Name    string `json:"filename"`
 	Content string `json:"content"`
 }
+
+// Files is array of gistfile object
+type Files map[string]*File
 
 func check(e error) {
 	if e != nil {
@@ -28,7 +31,7 @@ func check(e error) {
 
 func getToken() (token string) {
 	cmd := exec.Command("git", "config", "--get", "gist.token")
-	log.Println("Get gist token")
+	// log.Println("Get gist token")
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -93,7 +96,7 @@ func GetGist(gistID string) (resp *grequests.Response) {
 }
 
 // UploadGist is upload file content to gist
-func UploadGist(path string) (resp *grequests.Response) {
+func UploadGist(name string, path string, public bool) (resp *grequests.Response) {
 	token := getToken()
 	api := "https://api.github.com/gists"
 	log.Println("UploadGist:", path)
@@ -102,14 +105,17 @@ func UploadGist(path string) (resp *grequests.Response) {
 	check(err)
 
 	// get filename
-	name := filepath.Base(path)
+	filename := filepath.Base(path)
 
-	file := map[string]File{
-		name: File{
-			Content: string(content),
-		},
+	files := make(Files)
+	files[filename] = &File{
+		Content: string(content),
 	}
-	obj := map[string]map[string]File{"files": file}
+	if name != "" {
+		files[filename].Name = name
+	}
+
+	obj := map[string]map[string]*File{"files": files}
 	jsonObj, err := json.Marshal(obj)
 	check(err)
 

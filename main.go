@@ -36,8 +36,21 @@ func main() {
 			Aliases: []string{"u"},
 			Usage: "Upload file to gist",
 			Action: func(c *cli.Context) error {
-				gist.UploadGist(c.Args().First())
+				// log.Println(c.String("name"))
+				gist.UploadGist(c.String("name"), c.Args().First(), c.Bool("public"))
 				return nil
+			},
+			Flags: []cli.Flag{
+				&cli.StringFlag{
+					Name: "name",
+					Aliases: []string{"n"},
+					Value: "",
+					Usage: "gistfile name",
+				},
+				&cli.BoolFlag{
+					Name: "public",
+					Value: false,
+				},
 			},
 		},
 	}

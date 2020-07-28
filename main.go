@@ -19,7 +19,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gistgo"
 	app.Usage = "A cli tool to upload file to Github Gist"
-	app.Version = "1.0.0"
+	app.Version = "1.0.1"
 
 	app.Commands = []*cli.Command{
 		{

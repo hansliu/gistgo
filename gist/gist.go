@@ -115,7 +115,9 @@ func UploadGist(name string, path string, public bool) (resp *grequests.Response
 		files[filename].Name = name
 	}
 
-	obj := map[string]map[string]*File{"files": files}
+	obj := make(map[string]interface{})
+	obj["files"] = files
+	obj["public"] = public
 	jsonObj, err := json.Marshal(obj)
 	check(err)
 
